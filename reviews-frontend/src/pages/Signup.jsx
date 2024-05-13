@@ -11,14 +11,19 @@ import axios from "axios";
 import { useState } from "react";
 import Alert from "../components/Alert";
 import Fade from '@mui/material/Fade';
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const navigate = useNavigate()
   const [state, setState] = useState({
     open: false,
     Transition: Fade,
   })
 
-  const handleClick = () => {
+  const [alertMsg, setAlertMsg] = useState("")
+
+  const handleClick = (message) => {
+    setAlertMsg(message)
     setState({
       ...state,
       open: true,
@@ -44,11 +49,17 @@ export default function Signup() {
       })
 
       console.log(res.data)
+      handleClick(res.data.message)
+
+      localStorage.setItem('google-reviews-jwt-token', res.data.token)
+
+      setTimeout(()=>{
+        navigate("/wishlist")
+      }, 2000)
     } catch(err){
       console.log(err.response.data.message)
+      handleClick(err.response.data.message)
     }
-
-    handleClick()
   };
 
   return (
@@ -128,7 +139,7 @@ export default function Signup() {
           </Grid>
         </Box>
       </Box>
-      <Alert msg="Signup successful" handleClick={handleClick} setState={setState} state={state}/>
+      <Alert msg={alertMsg} setState={setState} state={state}/>
     </Container>
   );
 }

@@ -99,7 +99,7 @@ router.post("/signin", async (req, res) => {
 
     if(!user){
         return res.status(411).json({
-            message: "Error while logging in"
+            message: "User does not exist"
         })
     }
 
@@ -110,6 +110,7 @@ router.post("/signin", async (req, res) => {
     }, JWT_SECRET)
 
     res.json({
+        message: "User signed in successfully",
         token: token
     })
 })

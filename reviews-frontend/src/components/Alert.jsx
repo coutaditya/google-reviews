@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 
-export default function Alert({msg, handleClick, setState, state}) {
+export default function Alert({msg, setState, state}) {
 
   const handleClose = () => {
     setState({
