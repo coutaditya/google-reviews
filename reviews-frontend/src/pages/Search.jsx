@@ -2,12 +2,12 @@ import { Button, Box, Skeleton, Grid } from '@mui/material';
 import GenreFilter from '../components/GenreFilter';
 import axios from "axios";
 import DisplayResult from '../components/DisplayResult';
-import {  useSetRecoilState } from 'recoil';
+import {  useRecoilState } from 'recoil';
 import { moviesAtom } from '../store/atoms/atoms';
 import { useState } from 'react';
 
 export function Search() {
-    const setMovies = useSetRecoilState(moviesAtom)
+    const [movies, setMovies] = useRecoilState(moviesAtom)
     const [moviesFetched, setMoviesFetched] = useState(false)
     const [fetching, setFetching] = useState(false)
 
@@ -43,7 +43,7 @@ export function Search() {
                     ))}
                 </Grid>
                 : 
-                <DisplayResult />
+                <DisplayResult movies={movies}/>
              : null}
         </div>
     );

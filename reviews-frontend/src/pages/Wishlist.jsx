@@ -1,22 +1,22 @@
-import { Button, Box, Skeleton, Grid } from '@mui/material';
+import { Button, Box, Skeleton, Grid, Typography } from '@mui/material';
 import GenreFilter from '../components/GenreFilter';
 import axios from "axios";
 import DisplayResult from '../components/DisplayResult';
-import {  useRecoilState } from 'recoil';
-import { moviesAtom } from '../store/atoms/atoms';
+import {  useRecoilState, useRecoilValue } from 'recoil';
+import { moviesAtom, userAtom, wishlistedMoviesAtom } from '../store/atoms/atoms';
 import { useEffect, useState } from 'react';
+import { TOKEN_NAME } from '../constants/constants';
 
 export function Wishlist() {
-    const [moviesFetched, setMoviesFetched] = useState(false)
+    // const [moviesFetched, setMoviesFetched] = useState(false)
     const [fetching, setFetching] = useState(false)
-    const [wishlistedMovies, setWishlistedMovies] = useState([])
+    const [wishlistedMovies, setWishlistedMovies] = useRecoilState(wishlistedMoviesAtom)
+    const user = useRecoilValue(userAtom)
 
     const fetchData = async () => {
-        const token = localStorage.getItem('google-reviews-jwt-token')
-        console.log(token)
         const res = await axios.get("http://localhost:3000/api/v1/user/wishlist",{
             headers: {
-                'Authorization': "Bearer "+token
+                'Authorization': "Bearer "+localStorage.getItem(TOKEN_NAME)
             }
         })
         setWishlistedMovies(res.data.wishlist)
@@ -24,23 +24,25 @@ export function Wishlist() {
     }
 
     useEffect(()=>{
+        console.log(user)
         try{
-            setMoviesFetched(true)
-            setFetching(true)
-            setTimeout(async()=>{
-                fetchData()
-                setFetching(false)
-            }, 2000)
+            if(user) {
+                setFetching(true)
+                setTimeout(async()=>{
+                    fetchData()
+                    setFetching(false)
+                }, 2000)
+            } 
         } catch(err){
 
         }
-    }, [])
+    }, [user])
 
     const skeletonArray = Array.from({ length: 9 }, (_, index) => index + 1);
 
     return (
         <div>
-            {(moviesFetched) ? (fetching) ? 
+            {(user) ? (fetching) ? 
                 <Grid container spacing={3} sx={{ display: "flex", justifyContent: "space-around", padding: 5 }}>
                     {skeletonArray.map((index) => (
                         <Grid item xs={12} sm={6} md={4} key={index}>
@@ -50,7 +52,7 @@ export function Wishlist() {
                 </Grid>
                 : 
                 <DisplayResult movies={wishlistedMovies}/>
-             : null}
+             : <Typography>Sign in or Sign up to wishlist movies here</Typography>}
         </div>
     );
 }

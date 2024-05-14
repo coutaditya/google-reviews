@@ -12,6 +12,9 @@ import axios from "axios";
 import Alert from "../components/Alert";
 import Fade from '@mui/material/Fade';
 import { useNavigate } from "react-router-dom";
+import { TOKEN_NAME } from "../constants/constants";
+import { useSetRecoilState } from "recoil";
+import { userAtom } from "../store/atoms/atoms";
 
 export default function Login() {
   const navigate = useNavigate()
@@ -19,6 +22,8 @@ export default function Login() {
     open: false,
     Transition: Fade,
   })
+
+  const setUser = useSetRecoilState(userAtom)
 
   const [alertMsg, setAlertMsg] = useState("")
 
@@ -47,7 +52,10 @@ export default function Login() {
       console.log(res.data)
       handleClick(res.data.message)
 
-      localStorage.setItem('google-reviews-jwt-token', res.data.token)
+      localStorage.setItem(TOKEN_NAME, res.data.token)
+      setUser({
+        token: res.data.token
+      })
 
       setTimeout(()=>{
         navigate("/wishlist")

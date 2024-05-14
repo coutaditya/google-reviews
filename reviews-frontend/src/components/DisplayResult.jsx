@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import { styled } from '@mui/system';
-import { useRecoilValue } from 'recoil';
-import { moviesAtom } from '../store/atoms/atoms';
 
 const CardContainer = styled(Grid)(({ theme }) => ({
   height: '100%',
@@ -13,22 +11,8 @@ const CardContainer = styled(Grid)(({ theme }) => ({
 
 const itemsPerPage = 10;
 
-const data = [
-  {
-    id: 1,
-    name: 'Godzilla x Kong: The New Empire',
-    description:
-      'Following their explosive showdown, Godzilla and Kong must reunite against a colossal undiscovered threat hidden within our world, challenging their very existence – and our own.',
-    genre_ids: [28, 878, 12],
-    google_rating: '4.6',
-    language: 'en',
-  },
-  // Add more movie data as needed
-];
-
-const PaginatedCardList = () => {
+const PaginatedCardList = ({movies}) => {
   const [page, setPage] = useState(1);
-  const movies = useRecoilValue(moviesAtom);
   console.log(movies)
 
   const handleChange = (event, value) => {
@@ -36,7 +20,7 @@ const PaginatedCardList = () => {
   };
 
   const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = Math.min(movies.length - 1, startIndex + itemsPerPage);
+  const endIndex = Math.min(movies.length, startIndex + itemsPerPage);
   const paginatedData = (movies.length == 0) ? movies : movies.slice(startIndex, endIndex);
 
   return (
