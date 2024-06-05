@@ -10,6 +10,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { blue } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
+import { userAtom } from '../store/atoms/atoms';
+import { useRecoilValue } from 'recoil';
+import UserButton from './UserModalButton';
 
 const theme = createTheme({
     palette: {
@@ -25,6 +28,7 @@ const theme = createTheme({
 
 export default function ButtonAppBar() {
   const navigate = useNavigate()
+  const user = useRecoilValue(userAtom)
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -59,9 +63,9 @@ export default function ButtonAppBar() {
                 navigate("/wishlist") 
             }}>Wishlist</Button>
           </Typography>
-          <Button color="inherit" sx={{ fontSize: '1.2rem', textTransform: 'none' }} onClick={()=>{
+          {user ? <UserButton/> : <Button color="inherit" sx={{ fontSize: '1.2rem', textTransform: 'none' }} onClick={()=>{
                 navigate("/login") 
-            }}>Sign in</Button>
+            }}>Sign in</Button>}
         </Toolbar>
       </AppBar>
       </ThemeProvider>

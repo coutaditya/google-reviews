@@ -1,13 +1,19 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ButtonAppBar from './components/AppBar'
 import { Homepage } from './pages/Homepage'
 import { Search } from './pages/Search'
 import { Wishlist } from './pages/Wishlist'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import { useRecoilValue } from 'recoil'
+import { userAtom } from './store/atoms/atoms'
 
 function App() {
+  const user  = useRecoilValue(userAtom)
+
+  console.log(`user: ${user}`)
+
   return (
     <BrowserRouter>
       <ButtonAppBar />
