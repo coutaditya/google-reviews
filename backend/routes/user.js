@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const { Movie, User } = require("../db")
+const { Movie, User, EditorsChoiceMovie } = require("../db")
 const router = Router()
 const zod = require("zod")
 const jwt = require("jsonwebtoken")
@@ -45,6 +45,33 @@ router.get('/movies', async (req, res) => {
     })
 })
 
+router.get('/editor/movies', async (req, res) => {
+    try {
+        const editorsChoiceMovies = await EditorsChoiceMovie.find().populate('movie');
+
+        const transformedMovies = editorsChoiceMovies.map(editorChoice => {
+            const movie = editorChoice.movie;
+            const title = Object.keys(movie.toObject()).find(key => key !== '_id' && key !== 'genres');
+            const movieData = movie.toObject()[title];
+            return {
+                _id: movie._id,
+                name: title,
+                description: movieData.overview,
+                language: movieData.original_language,
+                genre_ids: movieData.genre_ids,
+                google_rating: movieData.google_rating
+            };
+        });
+
+        res.json({
+            movies: transformedMovies
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 router.post("/signup", async (req, res) => {
     const { success } = signupSchema.safeParse(req.body)
 
@@ -64,12 +91,19 @@ router.post("/signup", async (req, res) => {
         })
     }
 
+    let isEditor = false;
+
+    if(req.body.hasOwnProperty('isEditor')) {
+        isEditor = req.body.isEditor
+    }
+
     const user = await User.create({
         email: req.body.email,
         password: req.body.password,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        movieWishlist: []
+        movieWishlist: [],
+        isEditor: isEditor
     })
 
     const userId = user._id
@@ -143,6 +177,38 @@ router.get("/wishlist", authMiddleware, async (req, res) => {
     }
 });
 
+router.get('/editor/my_picked_movies', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.userId });
+        if (!user.isEditor) {
+            return res.status(400).json({ error: "The user does not have editor permissions" });
+        }
+
+        const myEditorsChoiceMovies = await EditorsChoiceMovie.find({ editor: req.userId }).populate('movie');
+
+        const transformedMovies = myEditorsChoiceMovies.map(editorChoice => {
+            const movie = editorChoice.movie;
+            const title = Object.keys(movie.toObject()).find(key => key !== '_id' && key !== 'genres');
+            const movieData = movie.toObject()[title];
+            return {
+                _id: movie._id,
+                name: title,
+                description: movieData.overview,
+                language: movieData.original_language,
+                genre_ids: movieData.genre_ids,
+                google_rating: movieData.google_rating
+            };
+        });
+
+        res.json({
+            movies: transformedMovies
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 router.put("/add_movie", authMiddleware, async (req, res) => {
     try {
         const movieId = req.body.movieId;
@@ -188,5 +254,59 @@ router.put("/remove_movie", authMiddleware, async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 })
+
+router.put("/editor/add_movie", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.userId });
+        if(!user.isEditor){
+            return res.status(400).json({ error: "The user does not have editor permissions" });
+        }
+
+        const movieId = req.body.movieId;
+        const  movieAlreadyPresent = await EditorsChoiceMovie.findOne({ movie: movieId });
+
+        if (movieAlreadyPresent) {
+            return res.status(400).json({ error: "Movie already exists in the editor's choice list" });
+        }
+
+        const movie = await Movie.findOne({ _id: movieId });
+        if (!movie) {
+            return res.status(404).json({ error: "Movie not found" });
+        }
+
+        await EditorsChoiceMovie.create({
+            editor: req.userId,
+            movie: movieId
+        });
+
+        res.json({ message: "Movie added successfully to editor's choice list" });
+    } catch (error) {
+        console.log(error) 
+        res.status(500).json({ error: "Internal server error" });
+    }
+})
+
+router.delete("/editor/remove_movie", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.userId });
+        if (!user.isEditor) {
+            return res.status(400).json({ error: "The user does not have editor permissions" });
+        }
+
+        const movieId = req.body.movieId;
+        const editorsChoiceMovie = await EditorsChoiceMovie.findOne({ editor: req.userId, movie: movieId });
+
+        if (!editorsChoiceMovie) {
+            return res.status(400).json({ error: "The movie is not in your editor's choice list or you did not add it" });
+        }
+
+        await EditorsChoiceMovie.deleteOne({ _id: editorsChoiceMovie._id });
+
+        res.json({ message: "Movie removed successfully from editor's choice list" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 module.exports = router

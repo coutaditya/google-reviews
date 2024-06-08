@@ -37,13 +37,30 @@ const userSchema = new mongoose.Schema({
     movieWishlist: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Movie"
-    }]
+    }],
+    isEditor: {
+        type: Boolean,
+        default: false
+    }
+})
+
+const editorsChoiceMovieSchema = new mongoose.Schema({
+    editor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    movie: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Movie"
+    }
 })
 
 const Movie = mongoose.model('Movie', movieSchema)
 const User = mongoose.model('User', userSchema)
+const EditorsChoiceMovie = mongoose.model('EditorsChoiceMovie', editorsChoiceMovieSchema)
 
 module.exports = {
     Movie,
-    User
+    User,
+    EditorsChoiceMovie
 }
