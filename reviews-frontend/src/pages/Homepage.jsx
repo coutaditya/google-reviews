@@ -48,7 +48,7 @@ export function Homepage () {
                     ))}
                 </Grid>
                 : 
-                <DisplayResult movies={editorsChoiceMovies}/>}
+                <DisplayResult movies={editorsChoiceMovies} pageName="homepage"/>}
         </div>
     );
 }

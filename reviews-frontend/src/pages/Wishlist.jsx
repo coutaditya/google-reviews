@@ -19,7 +19,7 @@ export function Wishlist() {
                 }
             })
             setWishlistedMovies(res.data.wishlist)
-            console.log(`wishlist data: ${res.data.wishlist}`)
+            console.log(`${res.data.wishlist}`)
         } catch(err) {
             console.log(err.response.data.message)
         }
@@ -29,7 +29,7 @@ export function Wishlist() {
         console.log(`user atom:`)
         console.log(user)
         try{
-            if(user) {
+            if(user.token) {
                 setFetching(true)
                 setTimeout(async()=>{
                     fetchData()
@@ -54,7 +54,7 @@ export function Wishlist() {
                     ))}
                 </Grid>
                 : 
-                <DisplayResult movies={wishlistedMovies}/>
+                <DisplayResult movies={wishlistedMovies} pageName="wishlist"/>
              : <Typography align="center" sx={{ marginTop: 2, marginBottom: 2 }}>Sign in or Sign up to wishlist movies here</Typography>}
         </div>
     );

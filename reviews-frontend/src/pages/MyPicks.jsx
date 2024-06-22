@@ -112,7 +112,7 @@ const MyPicks = () => {
                         ))}
                     </Grid>
                     : 
-                    <DisplayResult movies={myEditorsChoiceMovies}/>}
+                    <DisplayResult movies={myEditorsChoiceMovies} pageName="mypicks"/>}
             </Box>
         </>
     );

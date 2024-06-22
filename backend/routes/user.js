@@ -302,7 +302,7 @@ router.put("/editor/add_movie", authMiddleware, async (req, res) => {
     }
 })
 
-router.delete("/editor/remove_movie", authMiddleware, async (req, res) => {
+router.put("/editor/remove_movie", authMiddleware, async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.userId });
         if (!user.isEditor) {

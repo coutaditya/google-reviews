@@ -6,7 +6,7 @@ function authMiddleware (req, res, next) {
 
     if(!authHeader || !authHeader.startsWith('Bearer ')){
         res.status(403).json({
-            message: "Invalid/Missing Token"
+            error: "Invalid/Missing Token"
         })
     }
 
@@ -20,7 +20,7 @@ function authMiddleware (req, res, next) {
         next()
     } catch(err){
         return res.status(403).json({
-            message: "Invalid Token"
+            error: "Invalid Token"
         })
     }
 }

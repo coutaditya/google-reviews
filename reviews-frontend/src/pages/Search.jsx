@@ -43,7 +43,7 @@ export function Search() {
                     ))}
                 </Grid>
                 : 
-                <DisplayResult movies={movies}/>
+                <DisplayResult movies={movies} pageName="search"/>
              : null}
         </div>
     );
