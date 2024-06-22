@@ -6,12 +6,30 @@ export const moviesAtom = atom({
     default: []
 })
 
+export const filteredMoviesAtom = atom({
+    key: 'filteredMoviesAtom',
+    default: []
+})
+
 export const wishlistedMoviesAtom = atom({
     key: 'wishlistedMoviesAtom',
     default: []
 })
 
+export const editorsChoiceMoviesAtom = atom({
+    key: 'editorsChoiceMoviesAtom',
+    default: []
+})
+
+export const myEditorsChoiceMoviesAtom = atom({
+    key: 'myEditorsChoiceMoviesAtom',
+    default: []
+})
+
 export const userAtom = atom({
     key: 'userAtom',
-    default: localStorage.getItem(TOKEN_NAME)
+    default: {
+        "token": localStorage.getItem(TOKEN_NAME),
+        "isEditor": false
+    }
 })

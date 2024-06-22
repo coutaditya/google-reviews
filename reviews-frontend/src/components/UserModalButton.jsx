@@ -36,7 +36,10 @@ const UserButton = () => {
 
   const handleSignOut = () => {
     localStorage.removeItem(TOKEN_NAME)
-    setUser(null)
+    setUser({
+      token: null,
+      isEditor: false
+    })
     setOpen(false)
   }
 

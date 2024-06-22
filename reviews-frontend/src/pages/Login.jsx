@@ -54,7 +54,8 @@ export default function Login() {
 
       localStorage.setItem(TOKEN_NAME, res.data.token)
       setUser({
-        token: res.data.token
+        token: res.data.token,
+        isEditor: res.data.isEditor
       })
 
       setTimeout(()=>{

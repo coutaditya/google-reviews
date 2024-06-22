@@ -3,11 +3,11 @@ import GenreFilter from '../components/GenreFilter';
 import axios from "axios";
 import DisplayResult from '../components/DisplayResult';
 import {  useRecoilState } from 'recoil';
-import { moviesAtom } from '../store/atoms/atoms';
+import { filteredMoviesAtom, moviesAtom } from '../store/atoms/atoms';
 import { useState } from 'react';
 
 export function Search() {
-    const [movies, setMovies] = useRecoilState(moviesAtom)
+    const [movies, setMovies] = useRecoilState(filteredMoviesAtom)
     const [moviesFetched, setMoviesFetched] = useState(false)
     const [fetching, setFetching] = useState(false)
 

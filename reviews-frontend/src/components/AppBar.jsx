@@ -51,6 +51,13 @@ export default function ButtonAppBar() {
                 navigate("/") 
             }}>Home</Button>
           </Typography>
+          {(user.isEditor) ? <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center'}} onClick={()=>{
+            navigate("/my-picks")
+          }}>
+            <Button color="inherit" sx={{ fontSize: '1.2rem', textTransform: 'none' }} onClick={()=>{
+                navigate("/my-picks") 
+            }}>My Picks</Button>
+          </Typography> : <></>}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }} onClick={()=>{
             navigate("/search")
           }}>
@@ -63,7 +70,7 @@ export default function ButtonAppBar() {
                 navigate("/wishlist") 
             }}>Wishlist</Button>
           </Typography>
-          {user ? <UserButton/> : <Button color="inherit" sx={{ fontSize: '1.2rem', textTransform: 'none' }} onClick={()=>{
+          {user.token ? <UserButton/> : <Button color="inherit" sx={{ fontSize: '1.2rem', textTransform: 'none' }} onClick={()=>{
                 navigate("/login") 
             }}>Sign in</Button>}
         </Toolbar>

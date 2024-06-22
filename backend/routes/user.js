@@ -18,6 +18,20 @@ const signinSchema = zod.object({
     password: zod.string()
 })
 
+// initial call on each reload to get the isEditor value if token is present
+router.get('/', authMiddleware, async (req, res) => {
+    try{
+        const user = await User.findOne({ _id: req.userId });
+
+        res.json({
+            isEditor: user.isEditor
+        })
+    } catch(err){
+        console.log(err)
+        res.status(500).json({ error: "Internal server error" });
+    }
+})
+
 router.get('/movies', async (req, res) => {
     let movie_count = req.query.movie_count || "50";
 
@@ -113,7 +127,8 @@ router.post("/signup", async (req, res) => {
 
     res.json({
         message: "User created successfully",
-        token: token
+        token: token,
+        isEditor: isEditor
     })
 })
 
@@ -145,7 +160,8 @@ router.post("/signin", async (req, res) => {
 
     res.json({
         message: "User signed in successfully",
-        token: token
+        token: token,
+        isEditor: user.isEditor
     })
 })
 
